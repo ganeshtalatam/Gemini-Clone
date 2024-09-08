@@ -24,6 +24,12 @@
 .sideBarDark .icon{
     width: 21px;
 }
+.sideBar .addicon{
+    width: 15px;
+}
+.sideBarDark .addicon{
+    width: 15px;
+}
 
 .sideBar .bottomicon{
     width: 20px;

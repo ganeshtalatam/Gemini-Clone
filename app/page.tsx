@@ -27,7 +27,10 @@ export default function Home() {
   };
   const [isNewChatActive, setIsNewChatActive] = useState(false);
   const handleNewChat = () => {
-    setIsNewChatActive(!isNewChatActive);
+    setIsNewChatActive(true);
+    setTimeout(() => {
+      setIsNewChatActive(false);
+    }, 2000);
   };
 
   console.log(isNewChatActive, "Active>>>>");
