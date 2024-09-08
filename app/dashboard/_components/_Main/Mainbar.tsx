@@ -99,12 +99,15 @@ function Mainbar({ getUserData, isActive }: IMainbar) {
   };
 
   const SaveinDb = async (recentPrompt: string, resultData: string) => {
-    const resultDb = await db.insert(GeminiOutput).values({
-      formData: recentPrompt,
-      aiResponse: resultData,
-      createdBy: user?.primaryEmailAddress?.emailAddress,
-      createdAt: moment().format("DD/MM/YYYY"),
-    });
+    if (user?.primaryEmailAddress?.emailAddress) {
+      const resultDb = await db.insert(GeminiOutput).values({
+        formData: recentPrompt,
+        aiResponse: resultData,
+        createdBy: user?.primaryEmailAddress.emailAddress,
+        createdAt: moment().format("DD/MM/YYYY"),
+      });
+    }
+
     // console.log("new data added");
   };
 
