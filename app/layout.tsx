@@ -1,8 +1,19 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Outfit } from "next/font/google";
 import "./globals.css";
+import { ClerkProvider } from "@clerk/nextjs";
+import { Provider } from "./dashboard/_components/Provider";
+import dynamic from "next/dynamic";
+import { cookies } from "next/headers";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Outfit({ subsets: ["latin"] });
+
+const AppThemeProvider = dynamic(
+  () => import("@/app/dashboard/_components/context/theme"),
+  {
+    ssr: false,
+  }
+);
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -16,7 +27,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <ClerkProvider>
+          <AppThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+          >
+            {children}
+          </AppThemeProvider>
+        </ClerkProvider>
+      </body>
     </html>
   );
 }
