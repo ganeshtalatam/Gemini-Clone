@@ -29,39 +29,71 @@ import clsx from "clsx";
 // import Templates from "@/app/(data)/Templates";
 // import { templates } from "@/app/(data)/Templates";
 
+import { UserData } from "@/app/page";
+
 interface IMainbar {
   getUserData: () => void;
   isActive: Boolean;
+  selectedChat: UserData | null;
 }
 
-function Mainbar({ getUserData, isActive }: IMainbar) {
-  // console.log(">>> mainbar");
+function Mainbar({ getUserData, isActive, selectedChat }: IMainbar) {
   const [input, setInput] = useState("");
   const [recentPrompt, setRecentPrompt] = useState("");
   const [prevPrompt, setPrevPrompts] = useState([""]);
   const [loading, setLoading] = useState(false);
   const [showResult, setShowResult] = useState(false);
   const [resultData, setResultData] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
+  
   const { resolvedTheme, theme } = useTheme();
-
-  console.log(theme, "useTheme");
-
   const { user, isLoaded } = useUser();
-  // console.log(isLoaded, user, ">>>>");
+  const { signOut } = useClerk();
+  
+  const timeoutIds = React.useRef<NodeJS.Timeout[]>([]);
+  const abortRef = React.useRef(false);
+
+  const name = user?.firstName;
+
+  useEffect(() => {
+    return () => {
+       timeoutIds.current.forEach(clearTimeout);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (selectedChat) {
+      setRecentPrompt(selectedChat.formData);
+      setResultData(selectedChat.aiResponse);
+      setShowResult(true);
+      setLoading(false);
+      setIsTyping(false);
+    }
+  }, [selectedChat]);
 
   useEffect(() => {
     if (isActive) {
-      console.log(isActive, "isActive");
       setShowResult(false);
     }
   }, [isActive]);
-  const { signOut } = useClerk();
-  const name = user?.firstName;
 
-  const delayPara = (index: any, nextWord: any) => {
-    setTimeout(function () {
+  const delayPara = (index: number, nextWord: string) => {
+    const id = setTimeout(function () {
       setResultData((prev) => prev + nextWord);
     }, 75 * index);
+    timeoutIds.current.push(id);
+  };
+
+  const stopGeneration = () => {
+    if (loading) {
+      abortRef.current = true;
+      setLoading(false);
+    }
+    if (isTyping) {
+      timeoutIds.current.forEach(clearTimeout);
+      timeoutIds.current = [];
+      setIsTyping(false);
+    }
   };
 
   const onSent = async () => {
@@ -70,55 +102,67 @@ function Mainbar({ getUserData, isActive }: IMainbar) {
     setShowResult(true);
     setRecentPrompt(input);
     setPrevPrompts((prev) => [...prev, input]);
-
     setInput("");
+    
+    abortRef.current = false;
+    timeoutIds.current = [];
+
     const response = await run(input);
 
-    let responseArray = response.split("**");
-    let newArray = "";
-    for (let i = 0; i < responseArray.length; i++) {
-      if (i === 0 || i % 2 !== 1) {
-        newArray += responseArray[i];
-      } else {
-        newArray += "<b>" + responseArray[i] + "</b>";
-      }
+    if (abortRef.current) {
+      return; 
     }
-    let newArray2 = newArray.split("*").join("</br>");
-    let newArray3 = newArray2.split("   ").join("/br");
-    let newResponse = newArray3.split(" ");
-    for (let i = 0; i < newResponse.length; i++) {
-      const nextWord = newResponse[i];
+
+    if (!response) return;
+
+    // Format the response:
+    // 1. Bold: **text** -> <b>text</b>
+    let formatted = response.split("**").map((part, i) => 
+        i % 2 === 1 ? `<b>${part}</b>` : part
+    ).join("");
+
+    // 2. Newlines: \n -> <br />
+    formatted = formatted.replace(/\n/g, "<br />");
+    
+    // 3. Bullets: *  -> <br />• 
+    // Handle specific case where Gemini uses * for bullets
+    formatted = formatted.replace(/\* /g, "<br />• ");
+
+    let newResponseArray = formatted.split(" ");
+    
+    setLoading(false);
+    setIsTyping(true);
+
+    for (let i = 0; i < newResponseArray.length; i++) {
+      const nextWord = newResponseArray[i];
       delayPara(i, nextWord + " ");
     }
-    await SaveinDb(recentPrompt, resultData);
-    setTimeout(() => {
-      getUserData();
-    }, 1000);
-    setResultData(newArray2);
-    setLoading(false);
+    
+    // Set final timeout to turn off typing state and SAVE to DB
+    const finishId = setTimeout(async () => {
+        setIsTyping(false);
+        // Save to DB only if fully completed
+        await SaveinDb(input, formatted); 
+        getUserData();
+    }, 75 * newResponseArray.length);
+    
+    timeoutIds.current.push(finishId);
   };
 
-  const SaveinDb = async (recentPrompt: string, resultData: string) => {
+  const SaveinDb = async (promptText: string, aiResponseText: string) => {
     if (user?.primaryEmailAddress?.emailAddress) {
-      const resultDb = await db.insert(GeminiOutput).values({
-        formData: recentPrompt,
-        aiResponse: resultData,
+      await db.insert(GeminiOutput).values({
+        formData: promptText,
+        aiResponse: aiResponseText,
         createdBy: user?.primaryEmailAddress.emailAddress,
         createdAt: moment().format("DD/MM/YYYY"),
       });
     }
-
-    // console.log("new data added");
   };
-
-  console.log(resolvedTheme, "resolvedTheme-mainbar");
 
   return (
     <div
-      // className={`${resolvedTheme === "light" ? styles.main : styles.darkmain}`}
       className={clsx(styles["main"], styles[`main-${resolvedTheme}`])}
-
-      // className={clsx(styles["main"], styles[`main-dark`])}
     >
       <div className={styles.nav}>
         <p
@@ -229,22 +273,19 @@ function Mainbar({ getUserData, isActive }: IMainbar) {
               <TbPhotoPlus className={styles.bottomIcon} />
               <MdMic className={styles.bottomIcon} />
 
-              {/* {loading && <FaStopCircle />} */}
-              {(() => {
-                if (loading) {
-                  return <FaStopCircle className={styles.bottomIcon} />;
-                }
-
-                if (input) {
-                  return (
+              {(loading || isTyping) ? (
+                 <FaStopCircle 
+                    className={styles.bottomIcon} 
+                    onClick={stopGeneration}
+                    cursor="pointer"
+                 />
+              ) : (input ? (
                     <IoSend
                       onClick={() => onSent()}
                       className={styles.bottomIcon}
                     />
-                  );
-                }
-                return null;
-              })()}
+                  ) : null
+              )}
             </div>
           </div>
           <p

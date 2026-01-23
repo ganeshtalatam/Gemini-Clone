@@ -1,15 +1,7 @@
-const {
-  GoogleGenerativeAI,
-  HarmCategory,
-  HarmBlockThreshold,
-} = require("@google/generative-ai");
+import { GoogleGenAI } from "@google/genai";
 
 const apiKey = process.env.NEXT_PUBLIC_GOOGLE_GEMINI_API_KEY;
-const genAI = new GoogleGenerativeAI(apiKey);
-
-const model = genAI.getGenerativeModel({
-  model: "gemini-1.5-flash",
-});
+const genAI = new GoogleGenAI({ apiKey });
 
 const generationConfig = {
   temperature: 1,
@@ -19,17 +11,30 @@ const generationConfig = {
   responseMimeType: "text/plain",
 };
 
-async function run(prompt: any) {
-  const chatSession = model.startChat({
-    generationConfig,
-    // safetySettings: Adjust safety settings
-    // See https://ai.google.dev/gemini-api/docs/safety-settings
-    history: [],
-  });
+async function run(prompt: string) {
+  // 1. Safety Check: Ensure prompt exists
+  if (!prompt) return "Error: Prompt is empty";
 
-  const result = await chatSession.sendMessage(prompt);
-  console.log(result.response.text());
-  return result.response.text();
+  try {
+    const chatSession = genAI.chats.create({
+      model: "gemini-2.5-flash",
+      config: generationConfig,
+      history: [],
+    });
+
+    // 2. FIXED: Pass the prompt inside the 'message' object
+    const result = await chatSession.sendMessage({
+      message: prompt,
+    });
+
+    // 3. Return text (accessed as a property)
+    console.log(result.text);
+    return result.text;
+
+  } catch (error) {
+    console.error("Gemini API Error:", error);
+    return "Something went wrong with the AI request.";
+  }
 }
 
 export default run;

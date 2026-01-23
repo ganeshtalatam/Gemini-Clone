@@ -1,221 +1,352 @@
-.sideBar{
+.sideBar {
     min-height: 100vh;
     display: inline-flex;
     flex-direction: column;
     justify-content: space-between;
     background-color: #f0f4f9;
-    padding: 25px 15px;
+    padding: 20px 15px;
     animation: fadeIn 1.5s;
+    width: 280px;
+    transition: width 0.4s ease-in-out;
+    overflow: hidden;
 }
 
-.sideBarDark{
+.sideBarDark {
     background-color: #1e1f20;
     min-height: 100vh;
     display: inline-flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 25px 15px;
+    padding: 20px 15px;
     animation: fadeIn 1.5s;
+    width: 280px;
+    transition: width 0.4s ease-in-out;
+    overflow: hidden;
 }
 
-.sideBar .icon{
-    width: 21px;
-}
-.sideBarDark .icon{
-    width: 21px;
-}
-.sideBar .addicon{
-    width: 15px;
-}
-.sideBarDark .addicon{
-    width: 15px;
+.collapsed {
+    width: 80px;
 }
 
-.sideBar .bottomicon{
+.sideBarTop {
+    display: flex;
+    flex-direction: column;
+}
+
+.menuButton {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* margin-left: 10px; */
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+.menuButton:hover {
+    background-color: #e2e6eb;
+}
+.sideBarDark .menuButton:hover {
+    background-color: #333537;
+}
+
+.menuicon {
     width: 20px;
     height: 20px;
-    margin-top: 1px;
-}
-.sideBar .recenticon{
-    width: 16px;
-    /* height: 16px; */
-    margin-top: 1px;
 }
 
-
-.sideBarDark .bottomicon{
-    width: 20px;
-    height: 20px;
-    margin-top: 1px;
-}
-.sideBarDark .recenticon{
-    width: 16px;
-    /* height: 16px; */
-    margin-top: 4px;
-}
-
-.sideBar .menuButton{
-    cursor: pointer;
-    margin-left: 10px;
-    display: block;
-}
-
-.sideBar .menuicon{
-    width: 25px;
-    height: 25px;
-}
-
-.sideBarDark .menuicon{
-    width: 25px;
-    height: 25px;
-}
-
-.sideBarDark .menuButton{
-    cursor: pointer;
-    color: white;
-    margin-left: 10px;
-    display: block;
-}
-
-.sideBar .newChat{
-    margin-top: 50px;
+.newChat {
+    margin-top: 20px;
+    margin-bottom: 30px;
     display: inline-flex;
     align-items: center;
-    gap: 10px;
+    justify-content: space-between;
     padding: 10px 15px;
     background-color: #e6eaf1;
-    color: grey;
+    border-radius: 15px;
+    color: #444746;
     cursor: pointer;
     font-size: 14px;
-    border-radius: 50px;
-    
+    width: 140px;
+    transition: 0.3s;
 }
-.sideBarDark .newChat{
-    margin-top: 50px;
-    display: inline-flex;
+
+.newChatCollapsed {
+    width: 40px;
+    height: 40px;
+    padding: 0; /* Clear padding to align center */
+    border-radius: 50%;
+    justify-content: center;
     align-items: center;
+}
+
+.newChat:hover {
+    background-color: #dbe4f0;
+}
+
+.sideBarDark .newChat {
+    background-color: #282a2c;
+    color: #e3e3e3;
+    /* width: fit-content; */
+}
+
+.newChatText {
+    font-weight: 500;
+}
+
+.addicon {
+    width: 15 px;
+}
+
+/* Sections */
+.navSection {
+    margin-bottom: 5px;
+}
+
+.sectionItem {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 25px;
+    border-radius: 50px;
+    cursor: pointer;
+    color: #444746;
+    font-size: 14px;
+    font-weight: 500;
+}
+.sectionItem:hover {
+    background-color: #e6eaf1;
+}
+.sideBarDark .sectionItem {
+    color: #e3e3e3;
+}
+.sideBarDark .sectionItem:hover {
+    background-color: #333537;
+}
+
+.sectionTitle {
+    font-size: 14px;
+    font-weight: 500;
+    margin: 10px 25px;
+    color: #444746;
+}
+.sideBarDark .sectionTitle {
+    color: #e3e3e3;
+}
+
+
+/* Recent Chats List */
+.recentEntry {
+    display: flex;
+    flex-direction: column;
+    animation: fadeIn 2s;
+    overflow-y: auto;
+    max-height: 40vh;
+}
+
+.recent {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     gap: 10px;
+    padding: 10px 15px; /* Reduced padding to fit menu */
+    cursor: pointer;
+    color: #444746;
+    border-radius: 50px;
+    font-size: 14px;
+    margin-bottom: 2px;
+    min-height: 45px;
+}
+
+.sideBarDark .recent {
+    color: #e3e3e3;
+}
+
+.recent:hover {
+    background-color: #e6eaf1;
+}
+.sideBarDark .recent:hover {
+    background-color: #333537;
+}
+
+.active {
+    background-color: #c2e7ff; /* Google Blue Pill */
+    color: #001d35;
+    font-weight: 500;
+}
+.active:hover {
+    background-color: #c2e7ff;
+}
+
+.sideBarDark .active {
+    background-color: #004a77;
+    color: #c2e7ff;
+}
+.sideBarDark .active:hover {
+    background-color: #004a77;
+}
+
+.menuTrigger {
+    padding: 5px;
+    border-radius: 50%;
+    color: inherit;
+    display: flex;
+    align-items: center;
+    opacity: 0; /* Hidden by default */
+    transition: opacity 0.2s;
+}
+.recent:hover .menuTrigger, .active .menuTrigger {
+    opacity: 1; /* Show on hover or active */
+}
+
+.menuTrigger:hover {
+    background-color: rgba(0,0,0,0.1);
+}
+.sideBarDark .menuTrigger:hover {
+    background-color: rgba(255,255,255,0.1);
+}
+
+
+.recenticon {
+    width: 16px;
+    min-width: 16px;
+}
+
+/* Footer Bottom Side */
+.bottomSide {
+    display: flex;
+    flex-direction: column;
+}
+
+.recentBottom {
+    display: flex;
+    align-items: center;
+    gap: 15px;
     padding: 10px 15px;
-    background-color: #282828;
-    color: grey;
+    border-radius: 50px;
     cursor: pointer;
+    color: #444746;
     font-size: 14px;
-    border-radius: 50px;
-    
+}
+.sideBarDark .recentBottom {
+    color: #e3e3e3;
 }
 
-.sideBar .recentEntry{
-    display: flex;
-    flex-direction: column;
-    animation: fadeIn 2s;
-    overflow: auto;
+.recentBottom:hover {
+    background-color: #e6eaf1;
 }
-.sideBarDark .recentEntry{
-    display: flex;
-    flex-direction: column;
-    animation: fadeIn 2s;
+.sideBarDark .recentBottom:hover {
+    background-color: #333537;
 }
 
-.sideBar .recentText{
-    margin-top: 30px;
-    margin-bottom: 15px;
-}
-.sideBarDark .recentText{
-    margin-top: 30px;
-    margin-bottom: 15px;
-}
-
-.sideBar .recent{
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px;
-    padding-right: 40px;
-    color: #282828;
-    border-radius: 50px;
-}
-.sideBarDark .recent{
-    display: flex;
-    align-items: start;
-    gap: 10px;
-    padding: 10px;
-    padding-right: 40px;
-    color: #c4c7c5;
-    border-radius: 50px;
-}
-
-.sideBar .recent:hover{
-    background-color: #e2e6eb;
-}
-.sideBarDark .recent:hover{
-    background-color: #282a2c;
-}
-
-.sideBar .recentBottom{
-    display: flex;
-    align-items: start;
-    font-size: 16px;
-    gap: 10px;
-    padding: 10px;
-    padding-right: 40px;
-    color: #282828;
-    border-radius: 50px;
-    padding-right: 10px;
-    cursor: pointer;
-}
-.sideBarDark .recentBottom{
-    display: flex;
-    align-items: start;
-    font-size: 16px;
-    gap: 10px;
-    padding: 10px;
-    padding-right: 40px;
-    color: #c4c7c5;
-    border-radius: 50px;
-    padding-right: 10px;
-    cursor: pointer;
-}
-
-.sideBar .recentBottom:hover{
-    background-color: #e2e6eb;
-}
-.sideBarDark .recentBottom:hover{
-    background-color: #282a2c;
-}
-
-.sideBar .bottomSide{
-    display: flex;
-    flex-direction: column;
-}
-.sideBarDark .bottomSide{
-    display: flex;
-    flex-direction: column;
+.bottomicon {
+    width: 20px;
+    height: 20px;
 }
 
 @media (max-width : 600px) {
-    .sideBar{
-        display: none;
-    }
-    .sideBarDark{
-        display: none;
-    }
+    .sideBar { display: none; }
+    .sideBarDark { display: none; }
 }
 
 @keyframes fadeIn {
-    0%{
-        opacity: 0;
-    }
-    100%{
-        opacity: 1;
-    }
+    0% { opacity: 0; }
+    100% { opacity: 1; }
 }
 
-/* @media (prefers-color-scheme: dark){
-    .sideBar{
-    background-color: #1e1f20
-    }
-} */
+/* Modal Styles */
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
 
-/* [theme="dark"].sideBar{
-    background-color: #1e1f20   
-} */
+.modalContent {
+    background-color: white;
+    padding: 24px;
+    border-radius: 28px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.sideBarDark .modalContent {
+    background-color: #2b2b2b;
+    color: #e3e3e3;
+}
+
+.modalTitle {
+    font-size: 24px;
+    margin-bottom: 24px;
+    font-weight: 400;
+}
+
+.modalInput {
+    width: 100%;
+    padding: 10px 15px;
+    border: 2px solid #0b57d0;
+    border-radius: 4px;
+    font-size: 16px;
+    outline: none;
+    color: #1f1f1f;
+    background: transparent;
+}
+
+.sideBarDark .modalInput {
+    color: #e3e3e3;
+    border-color: #a8c7fa;
+}
+
+.modalActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 30px;
+}
+
+.cancelBtn, .renameBtn {
+    background: none;
+    border: none;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.cancelBtn {
+    color: #0b57d0;
+}
+.sideBarDark .cancelBtn {
+    color: #a8c7fa;
+}
+
+.cancelBtn:hover {
+    background-color: rgba(11, 87, 208, 0.08);
+}
+.sideBarDark .cancelBtn:hover {
+    background-color: rgba(168, 199, 250, 0.08);
+}
+
+
+.renameBtn {
+    color: #444746;
+}
+.sideBarDark .renameBtn {
+    color: #c4c7c5;
+}
+
+/* Enabled state for rename mostly depends on logic, but basic hover */
+.renameBtn:hover {
+    background-color: rgba(0, 0, 0, 0.08);
+}
+.sideBarDark .renameBtn:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+}
