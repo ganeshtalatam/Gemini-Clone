@@ -34,7 +34,7 @@ const Sidebar = ({ getUserData, userData, onNewChat, onPromptSelect, onDeleteCha
   const mail = user?.primaryEmailAddress?.emailAddress;
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
-  const { theme, setTheme } = useTheme();
+  const { resolvedTheme } = useTheme();
   
   // Collapse state for sections
   const [expand, setExpand] = useState(true);
@@ -72,7 +72,7 @@ const Sidebar = ({ getUserData, userData, onNewChat, onPromptSelect, onDeleteCha
   return (
     <div
       className={clsx(
-        theme === "light" ? styles.sideBar : styles.sideBarDark,
+        resolvedTheme === "light" ? styles.sideBar : styles.sideBarDark,
         !expand && styles.collapsed
       )}
     >
