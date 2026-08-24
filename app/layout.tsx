@@ -6,6 +6,9 @@ import { Provider } from "./dashboard/_components/Provider";
 import dynamic from "next/dynamic";
 import { cookies } from "next/headers";
 
+export const maxDuration = 60;
+
+
 const inter = Outfit({ subsets: ["latin"] });
 
 const AppThemeProvider = dynamic(
